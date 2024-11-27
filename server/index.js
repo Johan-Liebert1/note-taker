@@ -2,7 +2,8 @@ import Express from "express";
 import { configDotenv } from "dotenv";
 import { resolve, join } from "node:path";
 import { exit } from "node:process";
-import userRouter from "./users";
+import userRouter from "./users.js";
+import { Sequelize } from "sequelize";
 
 const loadEnvironment = () => {
     const BASE_PATH = resolve(".");
@@ -17,8 +18,31 @@ const loadEnvironment = () => {
     }
 };
 
+const connectDB = () => {
+    const sequelize = new Sequelize(
+        process.env.MYSQL_DATABASE,
+        process.env.MYSQL_USER,
+        process.env.MYSQL_PASSWORD,
+        {
+            host: "127.0.0.1",
+            port: 3306,
+            dialect: "mysql",
+        },
+    );
+
+    sequelize
+        .authenticate()
+        .then(() => {
+            console.log("Connection has been established successfully.");
+        })
+        .catch((error) => {
+            console.error("Unable to connect to the database:", error);
+        });
+};
+
 const main = () => {
     loadEnvironment();
+    connectDB();
 
     const app = Express();
 
