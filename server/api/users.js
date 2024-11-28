@@ -1,21 +1,21 @@
 // @ts-check
 import { Router } from 'express';
-import { getErrorMessage } from './utils/index.js';
-import { User } from './db/users.js';
-import { generateJwtFromUserId } from './jwt/index.js';
-import { Note } from './db/notes.js';
-import { authMiddleware } from './middlewares/authMiddleware.js';
+import { getErrorMessage } from '../utils/index.js';
+import { User } from '../db/users.js';
+import { generateJwtFromUserId } from '../jwt/index.js';
+import { Note } from '../db/notes.js';
+import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const userRouter = Router();
 
-/** @typedef {import('./types/typedefs').UserRegisterRequest} UserRegisterRequest */
-/** @typedef {import('./types/typedefs').UserLoginRequest} UserLoginRequest */
+/** @typedef {import('../types/typedefs.js').UserRegisterRequest} UserRegisterRequest */
+/** @typedef {import('../types/typedefs.js').UserLoginRequest} UserLoginRequest */
 
 userRouter.post(
     '/register',
     /**
      * @param {import('express').Request<object, object, UserRegisterRequest>} req
-     * @param {import('express').Response<import('./types/typedefs').GenericResponse<{ userId: number; }>>} res
+     * @param {import('express').Response<import('../types/typedefs.js').GenericResponse<{ userId: number; }>>} res
      */
     async (req, res) => {
         try {
@@ -60,7 +60,7 @@ userRouter.post(
     '/login',
     /**
      * @param {import('express').Request<object, object, UserLoginRequest>} req
-     * @param {import('express').Response<import('./types/typedefs').GenericResponse<{ token: string; }>>} res
+     * @param {import('express').Response<import('../types/typedefs.js').GenericResponse<{ token: string; }>>} res
      */
     async (req, res) => {
         try {
@@ -124,9 +124,9 @@ userRouter.get(
     '/notes',
     authMiddleware,
     /**
-     * @typedef {import('sequelize').Model<import('./types/schema.js').NoteType>[]} AllNotes
+     * @typedef {import('sequelize').Model<import('../types/schema.js').NoteType>[]} AllNotes
      * @param {import('express').Request<object, object, object>} req
-     * @param {import('express').Response<import('./types/typedefs').GenericResponse<{ notes: AllNotes }>>} res
+     * @param {import('express').Response<import('../types/typedefs.js').GenericResponse<{ notes: AllNotes }>>} res
      */
     async (req, res) => {
         try {

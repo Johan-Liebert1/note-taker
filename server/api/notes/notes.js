@@ -1,19 +1,19 @@
 // @ts-check
 import { Router } from 'express';
-import { getErrorMessage } from './utils/index.js';
-import { Note } from './db/notes.js';
-import { authMiddleware } from './middlewares/authMiddleware.js';
+import { getErrorMessage } from '../../utils/index.js';
+import { Note } from '../../db/notes.js';
+import { authMiddleware } from '../../middlewares/authMiddleware.js';
 
 const notesRouter = Router();
 
-/** @typedef {import('./types/typedefs').NoteCreateRequest} NoteCreateRequest */
+/** @typedef {import('../../types/typedefs.js').NoteCreateRequest} NoteCreateRequest */
 
 notesRouter.post(
     '/create',
     authMiddleware,
     /**
      * @param {import('express').Request<object, object, NoteCreateRequest>} req
-     * @param {import('express').Response<import('./types/typedefs').GenericResponse<Note>>} res
+     * @param {import('express').Response<import('../../types/typedefs.js').GenericResponse<Note>>} res
      */
     async (req, res) => {
         try {
@@ -61,13 +61,13 @@ notesRouter.get(
     authMiddleware,
     /**
      * @param {import('express').Request<Record<'noteId', string>, object, object>} req
-     * @param {import('express').Response<import('./types/typedefs').GenericResponse<Note>>} res
+     * @param {import('express').Response<import('../../types/typedefs.js').GenericResponse<Note>>} res
      */
     async (req, res) => {
         try {
             const noteIdFromParam = req.params.noteId;
 
-            /** @type {import('./types/typedefs').GenericResponse} */
+            /** @type {import('../../types/typedefs.js').GenericResponse} */
             const invalidIdMessage = {
                 success: false,
                 error: {

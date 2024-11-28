@@ -4,10 +4,10 @@ import Express from 'express';
 import { configDotenv } from 'dotenv';
 import { resolve, join } from 'node:path';
 import { exit } from 'node:process';
-import userRouter from './users.js';
+import userRouter from './api/users.js';
 import { connectDB, defineModels } from './db/db.js';
 import bodyParser from 'body-parser';
-import notesRouter from './notes.js';
+import notesRouter from './api/notes/notes.js';
 
 export const SERVER_BASE_PATH = resolve('.');
 
