@@ -2,8 +2,9 @@
 import { Router } from 'express';
 import { getErrorMessage } from './utils/index.js';
 import { User } from './db/users.js';
-import { generateJwtFromUserId, getJwtFromRequest, validateJwt } from './jwt/index.js';
+import { generateJwtFromUserId } from './jwt/index.js';
 import { Note } from './db/notes.js';
+import { authMiddleware } from './middlewares/authMiddleware.js';
 
 const userRouter = Router();
 
@@ -121,6 +122,7 @@ userRouter.post(
 
 userRouter.get(
     '/notes',
+    authMiddleware,
     /**
      * @typedef {import('sequelize').Model<import('./types/schema.js').NoteType>[]} AllNotes
      * @param {import('express').Request<object, object, object>} req
@@ -128,22 +130,21 @@ userRouter.get(
      */
     async (req, res) => {
         try {
-            const tokenFromReq = getJwtFromRequest(req);
+            if (!req.decodedJwt) {
+                // this is only for sanity check
+                // as auth middleware should catch this
+                res.status(401).json({
+                    success: false,
+                    error: {
+                        message: 'Failed to decode user token.'
+                    }
+                });
 
-            if (!tokenFromReq.success) {
-                res.status(400).json(tokenFromReq);
-                return;
-            }
-
-            const jwtValidation = validateJwt(tokenFromReq.jwt);
-
-            if (!jwtValidation.success) {
-                res.status(401).json(jwtValidation);
                 return;
             }
 
             /** @type {number} */
-            const userId = jwtValidation.decodedJwt.payload['userId'];
+            const userId = req.decodedJwt.payload['userId'];
 
             /** @type {AllNotes} */
             const allNotes = await Note.findAll({ where: { user_id: userId } });

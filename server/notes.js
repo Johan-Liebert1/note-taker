@@ -1,8 +1,8 @@
 // @ts-check
 import { Router } from 'express';
 import { getErrorMessage } from './utils/index.js';
-import { getJwtFromRequest, validateJwt } from './jwt/index.js';
 import { Note } from './db/notes.js';
+import { authMiddleware } from './middlewares/authMiddleware.js';
 
 const notesRouter = Router();
 
@@ -10,30 +10,30 @@ const notesRouter = Router();
 
 notesRouter.post(
     '/create',
+    authMiddleware,
     /**
      * @param {import('express').Request<object, object, NoteCreateRequest>} req
      * @param {import('express').Response<import('./types/typedefs').GenericResponse<Note>>} res
      */
     async (req, res) => {
         try {
-            const tokenFromReq = getJwtFromRequest(req);
-
-            if (!tokenFromReq.success) {
-                res.status(400).json(tokenFromReq);
-                return;
-            }
-
-            const jwtValidation = validateJwt(tokenFromReq.jwt);
-
-            if (!jwtValidation.success) {
-                res.status(401).json(jwtValidation);
-                return;
-            }
-
             const { title, note } = req.body;
 
+            if (!req.decodedJwt) {
+                // this is only for sanity check
+                // as auth middleware should catch this
+                res.status(401).json({
+                    success: false,
+                    error: {
+                        message: 'Failed to decode user token.'
+                    }
+                });
+
+                return;
+            }
+
             /** @type {number} */
-            const userId = jwtValidation.decodedJwt.payload['userId'];
+            const userId = req.decodedJwt.payload['userId'];
 
             const createdNote = await Note.create({
                 user_id: userId,
@@ -58,26 +58,13 @@ notesRouter.post(
 
 notesRouter.get(
     '/:noteId',
+    authMiddleware,
     /**
      * @param {import('express').Request<Record<'noteId', string>, object, object>} req
      * @param {import('express').Response<import('./types/typedefs').GenericResponse<Note>>} res
      */
     async (req, res) => {
         try {
-            const tokenFromReq = getJwtFromRequest(req);
-
-            if (!tokenFromReq.success) {
-                res.status(400).json(tokenFromReq);
-                return;
-            }
-
-            const jwtValidation = validateJwt(tokenFromReq.jwt);
-
-            if (!jwtValidation.success) {
-                res.status(401).json(jwtValidation);
-                return;
-            }
-
             const noteIdFromParam = req.params.noteId;
 
             /** @type {import('./types/typedefs').GenericResponse} */
@@ -100,8 +87,21 @@ notesRouter.get(
 
             const noteId = Number.parseInt(noteIdFromParam);
 
+            if (!req.decodedJwt) {
+                // this is only for sanity check
+                // as auth middleware should catch this
+                res.status(401).json({
+                    success: false,
+                    error: {
+                        message: 'Failed to decode user token.'
+                    }
+                });
+
+                return;
+            }
+
             /** @type {number} */
-            const userId = jwtValidation.decodedJwt.payload['userId'];
+            const userId = req.decodedJwt.payload['userId'];
 
             const note = await Note.findOne({ where: { user_id: userId, id: noteId } });
 
