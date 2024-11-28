@@ -1,0 +1,24 @@
+services:
+    app:
+        image: note-taking
+        container_name: note-taking-app
+        environment:
+            DB_HOST: db
+        ports:
+            - '3000:3000'
+        depends_on:
+            - db
+
+    db:
+        image: mysql:latest
+        container_name: mysql-db
+        environment:
+            MYSQL_DATABASE: primary
+            MYSQL_USER: user
+            MYSQL_PASSWORD: password
+            MYSQL_ROOT_PASSWORD: rootpassword
+        volumes:
+            - db_data:/var/lib/mysql
+
+volumes:
+    db_data:
