@@ -1,14 +1,14 @@
 // @ts-check
 
 import jwtModule from 'jsonwebtoken';
-import { getErrorMessage } from '../utils';
+import { getErrorMessage } from '../utils/index.js';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { SERVER_BASE_PATH } from '../index.js';
 import Express from 'express';
 
 const jwtIssuer = 'respond.io';
-const hourInMs = 3600 * 1000;
+const hourInSec = 3600;
 
 /**
  * @param {string} jwt
@@ -53,8 +53,8 @@ export const generateJwtFromUserId = (userId) => {
         const data = {
             userId,
             iss: jwtIssuer,
-            // valid for one hour
-            exp: Date.now() + hourInMs
+            // valid for one hour (time in seconds)
+            exp: Date.now() / 1000 + hourInSec
         };
 
         return new Promise((resolve, reject) => {

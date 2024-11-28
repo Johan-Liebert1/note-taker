@@ -18,5 +18,8 @@
         "jsonwebtoken": "^9.0.2",
         "mysql2": "^3.11.4",
         "sequelize": "^6.37.5"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.0"
     }
 }

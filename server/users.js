@@ -1,7 +1,8 @@
 // @ts-check
-import Express, { Router } from 'express';
+import { Router } from 'express';
 import { getErrorMessage } from './utils/index.js';
 import { User } from './db/db.js';
+import { generateJwtFromUserId } from './jwt/index.js';
 
 const userRouter = Router();
 
@@ -11,8 +12,8 @@ const userRouter = Router();
 userRouter.post(
     '/register',
     /**
-     * @param {Express.Request<object, object, UserRegisterRequest>} req
-     * @param {Express.Response<import('./types/typedefs').GenericResponse<{ userId: number; }>>} res
+     * @param {import('express').Request<object, object, UserRegisterRequest>} req
+     * @param {import('express').Response<import('./types/typedefs').GenericResponse<{ userId: number; }>>} res
      */
     async (req, res) => {
         try {
@@ -57,8 +58,8 @@ userRouter.post(
 userRouter.post(
     '/login',
     /**
-     * @param {Express.Request<object, object, UserLoginRequest>} req
-     * @param {Express.Response<import('./types/typedefs').GenericResponse<{ token: string; }>>} res
+     * @param {import('express').Request<object, object, UserLoginRequest>} req
+     * @param {import('express').Response<import('./types/typedefs').GenericResponse<{ token: string; }>>} res
      */
     async (req, res) => {
         try {
@@ -74,6 +75,7 @@ userRouter.post(
                 });
             }
 
+            /** @type {import('sequelize').Model<User, User> | null} */
             const user = await User.findOne({ where: { email } });
 
             if (!user) {
@@ -85,7 +87,7 @@ userRouter.post(
                 });
             }
 
-            if (user.password !== password) {
+            if (user.dataValues.password !== password) {
                 return res.status(401).json({
                     success: false,
                     error: {
@@ -94,9 +96,11 @@ userRouter.post(
                 });
             }
 
+            const token = await generateJwtFromUserId(user.dataValues.id);
+
             return res.status(200).json({
                 success: true,
-                token: ''
+                token
             });
         } catch (error) {
             return res.status(500).json({
