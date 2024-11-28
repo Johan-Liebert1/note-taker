@@ -31,6 +31,11 @@ export const defineNotesModel = (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: true
             },
+            deleted: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
+            },
             user_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,

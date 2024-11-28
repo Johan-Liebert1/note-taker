@@ -59,6 +59,12 @@ case "$route" in
             -d '{ "title": "updated title", "message": "updated message" }'
         ;;
 
+    "delete-note")
+        noteId=$2
+
+        curl -X DELETE "$base/notes/delete/$noteId" -H "Authorization: Bearer $token"  -H 'content-type: application/json'
+        ;;
+
     *)
         echo "Route $route not recognised"
         ;;

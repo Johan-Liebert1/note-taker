@@ -17,7 +17,7 @@ createNotesRouter.post(
      */
     async (req, res) => {
         try {
-            const { title, note } = req.body;
+            const { title, message } = req.body;
 
             if (!req.decodedJwt) {
                 // this is only for sanity check
@@ -38,7 +38,7 @@ createNotesRouter.post(
             const createdNote = await Note.create({
                 user_id: userId,
                 title,
-                note
+                message
             });
 
             res.status(201).json(createdNote.toJSON());

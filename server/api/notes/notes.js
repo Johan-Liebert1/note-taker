@@ -6,6 +6,7 @@ import { authMiddleware } from '../../middlewares/authMiddleware.js';
 import createNotesRouter from './create.js';
 import updateNotesRouter from './update.js';
 import { getInvalidIdMessage } from '../../constants/constants.js';
+import deleteNotesRouter from './delete.js';
 
 const notesRouter = Router();
 
@@ -45,7 +46,9 @@ notesRouter.get(
             /** @type {number} */
             const userId = req.decodedJwt.payload['userId'];
 
-            const note = await Note.findOne({ where: { user_id: userId, id: noteId } });
+            const note = await Note.findOne({
+                where: { user_id: userId, id: noteId, deleted: false }
+            });
 
             if (!note) {
                 res.status(404).json({
@@ -76,5 +79,6 @@ notesRouter.get(
 
 notesRouter.use('/', createNotesRouter);
 notesRouter.use('/update', updateNotesRouter);
+notesRouter.use('/delete', deleteNotesRouter);
 
 export default notesRouter;

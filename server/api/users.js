@@ -147,7 +147,7 @@ userRouter.get(
             const userId = req.decodedJwt.payload['userId'];
 
             /** @type {AllNotes} */
-            const allNotes = await Note.findAll({ where: { user_id: userId } });
+            const allNotes = await Note.findAll({ where: { user_id: userId, deleted: false } });
 
             res.status(200).json({
                 success: true,
