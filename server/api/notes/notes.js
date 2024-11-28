@@ -59,7 +59,7 @@ notesRouter.get(
 
             console.log(note);
 
-            res.status(201).json(note.toJSON());
+            res.status(200).json(note.toJSON());
         } catch (error) {
             console.log(error);
 
