@@ -6,7 +6,7 @@ import { TableNames } from './tables.js';
 /** @typedef {import('../types/typedefs').GenericResponse<object, object>} GenericResponse */
 
 /**
- * @typedef {import('../types/schema').Note} Note
+ * @typedef {import('../types/schema').NoteType} Note
  *
  * @typedef {import('sequelize').Optional<Note, 'id' | 'created_at' | 'updated_at'>} CreationAttributes
  * @typedef {import('sequelize').Model<Note, CreationAttributes> & Note} NoteModel

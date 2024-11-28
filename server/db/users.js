@@ -6,7 +6,7 @@ import { TableNames } from './tables.js';
 /** @typedef {import('../types/typedefs').GenericResponse<object, object>} GenericResponse */
 
 /**
- * @typedef {import('../types/schema').User} User
+ * @typedef {import('../types/schema').UserType} User
  *
  * @typedef {import('sequelize').Optional<User, 'id' | 'created_at' | 'updated_at'>} CreationAttributes
  * @typedef {import('sequelize').Model<User, CreationAttributes> & User} UserModel

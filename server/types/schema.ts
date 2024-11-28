@@ -1,4 +1,4 @@
-export type User = {
+export type UserType = {
     id: number;
     email: string;
     password: string;
@@ -7,7 +7,7 @@ export type User = {
     updated_at: string;
 }
 
-export type Note = {
+export type NoteType = {
     id: number;
     title: string;
     note: string;

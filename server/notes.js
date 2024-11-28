@@ -1,7 +1,8 @@
 // @ts-check
-import Express, { Router } from 'express';
+import { Router } from 'express';
 import { getErrorMessage } from './utils/index.js';
-import { generateJwtFromUserId, getJwtFromRequest, validateJwt } from './jwt/index.js';
+import { getJwtFromRequest, validateJwt } from './jwt/index.js';
+import { Note } from './db/notes.js';
 
 const notesRouter = Router();
 
@@ -11,7 +12,7 @@ notesRouter.post(
     '/create',
     /**
      * @param {import('express').Request<object, object, NoteCreateRequest>} req
-     * @param {import('express').Response<import('./types/typedefs').GenericResponse<{ userId: number; }>>} res
+     * @param {import('express').Response<import('./types/typedefs').GenericResponse<Note>>} res
      */
     async (req, res) => {
         try {
@@ -29,9 +30,18 @@ notesRouter.post(
                 return;
             }
 
-            console.log(jwtValidation);
+            const { title, note } = req.body;
 
-            res.status(201);
+            /** @type {number} */
+            const userId = jwtValidation.decodedJwt.payload['userId'];
+
+            const createdNote = await Note.create({
+                user_id: userId,
+                title,
+                note
+            });
+
+            res.status(201).json(createdNote.toJSON());
         } catch (error) {
             console.log(error);
 

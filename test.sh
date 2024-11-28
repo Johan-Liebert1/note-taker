@@ -27,6 +27,11 @@ case "$route" in
             -d '{ "title": "firstNote", "note": "this is a note" }'
         ;;
 
+    "get-all-notes")
+        token=$2
+        curl "$base/users/notes" -H "Authorization: Bearer $token"
+        ;;
+
     *)
         echo "Route $route not recognised"
         ;;

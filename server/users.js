@@ -2,7 +2,8 @@
 import { Router } from 'express';
 import { getErrorMessage } from './utils/index.js';
 import { User } from './db/users.js';
-import { generateJwtFromUserId } from './jwt/index.js';
+import { generateJwtFromUserId, getJwtFromRequest, validateJwt } from './jwt/index.js';
+import { Note } from './db/notes.js';
 
 const userRouter = Router();
 
@@ -105,6 +106,51 @@ userRouter.post(
             res.status(200).json({
                 success: true,
                 token
+            });
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                statusCode: 500,
+                error: {
+                    message: getErrorMessage(error)
+                }
+            });
+        }
+    }
+);
+
+userRouter.get(
+    '/notes',
+    /**
+     * @typedef {import('sequelize').Model<import('./types/schema.js').NoteType>[]} AllNotes
+     * @param {import('express').Request<object, object, object>} req
+     * @param {import('express').Response<import('./types/typedefs').GenericResponse<{ notes: AllNotes }>>} res
+     */
+    async (req, res) => {
+        try {
+            const tokenFromReq = getJwtFromRequest(req);
+
+            if (!tokenFromReq.success) {
+                res.status(400).json(tokenFromReq);
+                return;
+            }
+
+            const jwtValidation = validateJwt(tokenFromReq.jwt);
+
+            if (!jwtValidation.success) {
+                res.status(401).json(jwtValidation);
+                return;
+            }
+
+            /** @type {number} */
+            const userId = jwtValidation.decodedJwt.payload['userId'];
+
+            /** @type {AllNotes} */
+            const allNotes = await Note.findAll({ where: { user_id: userId } });
+
+            res.status(200).json({
+                success: true,
+                notes: allNotes
             });
         } catch (error) {
             res.status(500).json({
