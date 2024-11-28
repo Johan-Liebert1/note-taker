@@ -32,6 +32,13 @@ case "$route" in
         curl "$base/users/notes" -H "Authorization: Bearer $token"
         ;;
 
+    "get-note-by-id")
+        token=$2
+        noteId=$3
+
+        curl "$base/notes/$noteId" -H "Authorization: Bearer $token"
+        ;;
+
     *)
         echo "Route $route not recognised"
         ;;
