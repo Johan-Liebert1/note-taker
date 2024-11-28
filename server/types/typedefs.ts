@@ -28,5 +28,10 @@ export type UserLoginRequest = {
 
 export type NoteCreateRequest = {
     title: string;
-    note: string;
+    message: string;
 };
+
+export type NoteUpdateRequest =
+    | { title: string }
+    | { message: string }
+    | { title: string; message: string };

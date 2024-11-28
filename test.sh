@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 route=$1
 
 if [[ -z $route ]]; then 
@@ -21,22 +23,40 @@ case "$route" in
         ;;
 
     "create-note")
-        token=$2
         curl -X POST "$base/notes/create" -H 'content-type: application/json' \
             -H "Authorization: Bearer $token" \
             -d '{ "title": "firstNote", "note": "this is a note" }'
         ;;
 
     "get-all-notes")
-        token=$2
         curl "$base/users/notes" -H "Authorization: Bearer $token"
         ;;
 
     "get-note-by-id")
-        token=$2
-        noteId=$3
+        noteId=$2
 
         curl "$base/notes/$noteId" -H "Authorization: Bearer $token"
+        ;;
+
+    "update-note-title")
+        noteId=$2
+
+        curl -X PUT "$base/notes/update/$noteId" -H "Authorization: Bearer $token" -H 'content-type: application/json' \
+            -d '{ "title": "This is new updated title once more" }'
+        ;;
+
+    "update-note-message")
+        noteId=$2
+
+        curl -X PUT "$base/notes/update/$noteId" -H "Authorization: Bearer $token" -H 'content-type: application/json'  \
+            -d '{ "message": "This is new updated message" }'
+        ;;
+
+    "update-note")
+        noteId=$2
+
+        curl -X PUT "$base/notes/update/$noteId" -H "Authorization: Bearer $token"  -H 'content-type: application/json'   \
+            -d '{ "title": "updated title", "message": "updated message" }'
         ;;
 
     *)

@@ -16,7 +16,7 @@ export const defineModels = async (sequelize) => {
         defineUserModel(sequelize);
         defineNotesModel(sequelize);
 
-        User.hasMany(Note);
+        // User.hasMany(Note);
 
         await sequelize.sync({ alter: true });
 

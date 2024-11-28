@@ -10,7 +10,7 @@ export type UserType = {
 export type NoteType = {
     id: number;
     title: string;
-    note: string;
+    message: string;
     user_id: number; // foreign key
     created_at: string;
     updated_at: string;
