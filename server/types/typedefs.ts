@@ -11,7 +11,7 @@ export type GenericResponseError<E = { message: string }> = {
 
 export type GenericResponse<
     R extends object = Record<string, unknown>,
-    E = { message: string } | string,
+    E = { message: string } | string
 > = (GenericResponseSuccess & R) | GenericResponseError<E>;
 
 // Requests
@@ -27,4 +27,6 @@ export type UserLoginRequest = {
 };
 
 export type NoteCreateRequest = {
+    title: string;
+    note: string;
 };

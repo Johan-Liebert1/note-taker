@@ -20,6 +20,13 @@ case "$route" in
             -d '{"password": "pass1", "email": "hello@example.com"}'
         ;;
 
+    "create-note")
+        token=$2
+        curl -X POST "$base/notes/create" -H 'content-type: application/json' \
+            -H "Authorization: Bearer $token" \
+            -d '{ "title": "firstNote", "note": "this is a note" }'
+        ;;
+
     *)
         echo "Route $route not recognised"
         ;;

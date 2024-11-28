@@ -9,9 +9,9 @@ export type User = {
 
 export type Note = {
     id: number;
-    email: string;
-    password: string;
-    username: string;
+    title: string;
+    note: string;
+    user_id: number; // foreign key
     created_at: string;
     updated_at: string;
 }

@@ -1,19 +1,11 @@
 // @ts-check
 
-import { DataTypes, NOW, Sequelize } from 'sequelize';
+import { Sequelize } from 'sequelize';
 import { getErrorMessage } from '../utils/index.js';
+import { defineUserModel, User } from './users.js';
+import { defineNotesModel, Note } from './notes.js';
 
 /** @typedef {import('../types/typedefs').GenericResponse<object, object>} GenericResponse */
-
-/**
- * @typedef {import('../types/schema').User} User
- *
- * @typedef {import('sequelize').Optional<User, 'id' | 'created_at' | 'updated_at'>} CreationAttributes
- * @typedef {import('sequelize').Model<User, CreationAttributes> & User} UserModel
- */
-
-/** @type {ReturnType<import('sequelize').Sequelize['define']>} */
-export let User;
 
 /**
  * @param {Sequelize} sequelize
@@ -21,40 +13,10 @@ export let User;
  */
 export const defineModels = async (sequelize) => {
     try {
-        User = sequelize.define(
-            'users',
-            /** @type {import('sequelize').ModelAttributes<UserModel>} */
-            ({
-                username: {
-                    type: DataTypes.STRING,
-                    allowNull: false,
-                    unique: true
-                },
-                email: {
-                    type: DataTypes.STRING,
-                    allowNull: false,
-                    unique: true
-                },
-                password: {
-                    type: DataTypes.STRING,
-                    allowNull: false
-                },
-                created_at: {
-                    type: DataTypes.DATE,
-                    allowNull: false,
-                    defaultValue: NOW
-                },
-                updated_at: {
-                    type: DataTypes.DATE,
-                    allowNull: false,
-                    defaultValue: NOW
-                }
-            }),
-            /** @type {import('sequelize').ModelOptions<UserModel>} */
-            ({
-                timestamps: false
-            })
-        );
+        defineUserModel(sequelize);
+        defineNotesModel(sequelize);
+
+        User.hasMany(Note);
 
         await sequelize.sync({ alter: true });
 

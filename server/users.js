@@ -1,7 +1,7 @@
 // @ts-check
 import { Router } from 'express';
 import { getErrorMessage } from './utils/index.js';
-import { User } from './db/db.js';
+import { User } from './db/users.js';
 import { generateJwtFromUserId } from './jwt/index.js';
 
 const userRouter = Router();
@@ -19,10 +19,8 @@ userRouter.post(
         try {
             const { username, password, email } = req.body;
 
-            console.log(req.body);
-
             if (username?.length === 0 || password?.length === 0 || email?.length === 0) {
-                return res.status(400).json({
+                res.status(400).json({
                     success: false,
                     statusCode: 400,
                     error: {
@@ -30,6 +28,7 @@ userRouter.post(
                             'Username, Password and Email should all have length greater than 0'
                     }
                 });
+                return;
             }
 
             // TODO: Hash the password here
@@ -39,12 +38,12 @@ userRouter.post(
                 email
             });
 
-            return res.status(201).json({
+            res.status(201).json({
                 success: true,
                 userId: result.toJSON().id
             });
         } catch (error) {
-            return res.status(500).json({
+            res.status(500).json({
                 success: false,
                 statusCode: 500,
                 error: {
@@ -66,44 +65,49 @@ userRouter.post(
             const { email, password } = req.body;
 
             if (email?.length === 0 || password?.length === 0) {
-                return res.status(400).json({
+                res.status(400).json({
                     success: false,
                     statusCode: 400,
                     error: {
                         message: 'Password and Email should all have length greater than 0'
                     }
                 });
+                return;
             }
 
             /** @type {import('sequelize').Model<User, User> | null} */
             const user = await User.findOne({ where: { email } });
 
             if (!user) {
-                return res.status(404).json({
+                res.status(404).json({
                     success: false,
                     error: {
                         message: `User with email ${email} not found. Please register.`
                     }
                 });
+
+                return;
             }
 
             if (user.dataValues.password !== password) {
-                return res.status(401).json({
+                res.status(401).json({
                     success: false,
                     error: {
                         message: `Invalid email or password`
                     }
                 });
+
+                return;
             }
 
             const token = await generateJwtFromUserId(user.dataValues.id);
 
-            return res.status(200).json({
+            res.status(200).json({
                 success: true,
                 token
             });
         } catch (error) {
-            return res.status(500).json({
+            res.status(500).json({
                 success: false,
                 statusCode: 500,
                 error: {

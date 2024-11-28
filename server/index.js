@@ -7,6 +7,7 @@ import { exit } from 'node:process';
 import userRouter from './users.js';
 import { connectDB, defineModels } from './db/db.js';
 import bodyParser from 'body-parser';
+import notesRouter from './notes.js';
 
 export const SERVER_BASE_PATH = resolve('.');
 
@@ -38,6 +39,7 @@ const main = async () => {
     app.use(bodyParser.json());
 
     app.use('/users', userRouter);
+    app.use('/notes', notesRouter);
 
     app.listen(process.env.PORT, () => {
         console.log(`Started server on port ${process.env.PORT}`);
