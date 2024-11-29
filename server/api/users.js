@@ -149,7 +149,7 @@ userRouter.get(
             /** @type {number} */
             const userId = req.decodedJwt.payload['userId'];
 
-            const value = await req.redis.hGet(userId.toString(), 'notes');
+            const value = await req.redis.get(`${userId}:notes`);
 
             if (value) {
                 /** @type {AllNotes} */

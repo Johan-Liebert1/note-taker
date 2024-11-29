@@ -37,17 +37,22 @@ deleteNotesRouter.delete(
                 return;
             }
 
+            const userId = req.decodedJwt.payload['userId'];
+
             // soft delete the note
             const updateResult = await Note.update(
                 { deleted: true },
                 {
                     where: {
-                        user_id: req.decodedJwt.payload['userId'],
+                        user_id: userId,
                         id: parseResult.parsed,
                         deleted: false
                     }
                 }
             );
+
+            // delete the key from redis cache as it's stale now
+            await req.redis.del(`${userId}:notes`);
 
             console.log(updateResult);
 

@@ -38,9 +38,14 @@ updateNotesRouter.put(
                 return;
             }
 
+            const userId = req.decodedJwt.payload['userId'];
+
             const updateResult = await Note.update(req.body, {
-                where: { user_id: req.decodedJwt.payload['userId'], id: parseResult.parsed }
+                where: { user_id: userId, id: parseResult.parsed }
             });
+
+            // delete from cache as it's now stale
+            await req.redis.del(`${userId}:notes`);
 
             console.log(updateResult);
 

@@ -1,7 +1,7 @@
 // @ts-check
 
 import { createClient } from 'redis';
-import { MaxRetries } from '../db/db';
+import { MaxRetries } from '../db/db.js';
 
 /** @returns {Promise<ReturnType<typeof createClient> | null>} */
 export const connectToRedis = async (tries = 0) => {
