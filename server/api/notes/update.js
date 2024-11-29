@@ -4,6 +4,7 @@ import { Note } from '../../db/notes.js';
 import { authMiddleware } from '../../middlewares/authMiddleware.js';
 import { getInvalidIdMessage } from '../../constants/constants.js';
 import { getErrorMessage, parseAsInt } from '../../utils/index.js';
+import logger from '../../logger/logger.js';
 
 const updateNotesRouter = Router();
 
@@ -47,7 +48,7 @@ updateNotesRouter.put(
             // delete from cache as it's now stale
             await req.redis.del(`${userId}:notes`);
 
-            console.log(updateResult);
+            logger.debug(updateResult);
 
             const updatedRows = updateResult[0];
 
@@ -65,7 +66,7 @@ updateNotesRouter.put(
                 success: true
             });
         } catch (error) {
-            console.log(error);
+            logger.error(error);
 
             res.status(500).json({
                 success: false,

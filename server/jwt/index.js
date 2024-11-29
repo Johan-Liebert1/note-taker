@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { SERVER_BASE_PATH } from '../index.js';
 import Express from 'express';
+import logger from '../logger/logger.js';
 
 const jwtIssuer = 'respond.io';
 const hourInSec = 3600;
@@ -30,7 +31,7 @@ export const validateJwt = (jwt) => {
             decodedJwt
         };
     } catch (error) {
-        console.log(error);
+        logger.error(error);
 
         return {
             success: false,

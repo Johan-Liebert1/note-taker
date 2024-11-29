@@ -3,6 +3,7 @@ import { Router } from 'express';
 import { getErrorMessage } from '../../utils/index.js';
 import { Note } from '../../db/notes.js';
 import { authMiddleware } from '../../middlewares/authMiddleware.js';
+import logger from '../../logger/logger.js';
 
 const createNotesRouter = Router();
 
@@ -43,7 +44,7 @@ createNotesRouter.post(
 
             res.status(201).json(createdNote.toJSON());
         } catch (error) {
-            console.log(error);
+            logger.error(error);
 
             res.status(500).json({
                 statusCode: 500,

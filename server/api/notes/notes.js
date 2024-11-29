@@ -7,6 +7,7 @@ import createNotesRouter from './create.js';
 import updateNotesRouter from './update.js';
 import { getInvalidIdMessage } from '../../constants/constants.js';
 import deleteNotesRouter from './delete.js';
+import logger from '../../logger/logger.js';
 
 const notesRouter = Router();
 
@@ -60,11 +61,11 @@ notesRouter.get(
                 return;
             }
 
-            console.log(note);
+            logger.debug(note);
 
             res.status(200).json(note.toJSON());
         } catch (error) {
-            console.log(error);
+            logger.error(error);
 
             res.status(500).json({
                 statusCode: 500,

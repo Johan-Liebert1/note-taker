@@ -9,6 +9,7 @@ import { connectDB, defineModels } from './db/db.js';
 import bodyParser from 'body-parser';
 import notesRouter from './api/notes/notes.js';
 import { connectToRedis } from './redis/redis.js';
+import logger from './logger/logger.js';
 
 export const SERVER_BASE_PATH = resolve('.');
 
@@ -18,7 +19,7 @@ const loadEnvironment = () => {
     });
 
     if (output.error) {
-        console.error(output.error);
+        logger.fatal(output.error);
         exit(1);
     }
 };
@@ -29,7 +30,7 @@ const main = async () => {
     const connectDBResponse = await connectDB();
 
     if (!connectDBResponse.success) {
-        console.log(connectDBResponse);
+        logger.fatal(connectDBResponse);
         // failed to connect to db, no point in continuing
         exit(1);
     }
@@ -39,7 +40,7 @@ const main = async () => {
     const redisClient = await connectToRedis();
 
     if (!redisClient) {
-        console.log('Failed to connect to redis...');
+        logger.fatal('Failed to connect to redis...');
         exit(1);
     }
 
@@ -56,7 +57,7 @@ const main = async () => {
     app.use('/notes', notesRouter);
 
     app.listen(process.env.PORT, () => {
-        console.log(`Started server on port ${process.env.PORT}`);
+        logger.info(`Started server on port ${process.env.PORT}`);
     });
 };
 

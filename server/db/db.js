@@ -4,6 +4,7 @@ import { Sequelize } from 'sequelize';
 import { getErrorMessage } from '../utils/index.js';
 import { defineUserModel } from './users.js';
 import { defineNotesModel } from './notes.js';
+import logger from '../logger/logger.js';
 
 export const MaxRetries = 10;
 
@@ -26,7 +27,7 @@ export const defineModels = async (sequelize) => {
             success: true
         };
     } catch (error) {
-        console.log(error);
+        logger.error(error);
 
         return {
             success: false,
@@ -54,7 +55,7 @@ export const connectDB = async (times = 0) => {
             };
         }
 
-        console.log('Connecting to db... Tried %d times', times);
+        logger.info(`Connecting to db... Tried ${times} times`);
 
         const sequelize = new Sequelize(
             process.env.MYSQL_DATABASE || '',
@@ -70,14 +71,14 @@ export const connectDB = async (times = 0) => {
 
         await sequelize.authenticate();
 
-        console.log('Connection to DB successful');
+        logger.info('Connection to DB successful');
 
         return {
             success: true,
             sequelize
         };
     } catch (error) {
-        console.log(error);
+        logger.error(error);
 
         return new Promise((res) => setTimeout(async () => res(await connectDB(times + 1)), 3000));
     }

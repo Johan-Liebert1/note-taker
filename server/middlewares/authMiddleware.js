@@ -1,6 +1,7 @@
 // @ts-check
 
 import { getJwtFromRequest, validateJwt } from '../jwt/index.js';
+import logger from '../logger/logger.js';
 
 /**
  * @param {import('express').Request} req
@@ -27,7 +28,7 @@ export const authMiddleware = (req, res, next) => {
 
         next();
     } catch (error) {
-        console.log(error);
+        logger.error(error);
 
         res.status(500).json({
             success: false,
