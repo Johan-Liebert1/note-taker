@@ -5,7 +5,7 @@ import { getErrorMessage } from '../utils/index.js';
 import { defineUserModel } from './users.js';
 import { defineNotesModel } from './notes.js';
 
-const MaxRetries = 10;
+export const MaxRetries = 10;
 
 /** @typedef {import('../types/typedefs').GenericResponse<object, object>} GenericResponse */
 

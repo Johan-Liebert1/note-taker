@@ -8,6 +8,7 @@ import userRouter from './api/users.js';
 import { connectDB, defineModels } from './db/db.js';
 import bodyParser from 'body-parser';
 import notesRouter from './api/notes/notes.js';
+import { connectToRedis } from './redis/redis.js';
 
 export const SERVER_BASE_PATH = resolve('.');
 
@@ -35,7 +36,20 @@ const main = async () => {
 
     await defineModels(connectDBResponse.sequelize);
 
+    const redisClient = await connectToRedis();
+
+    if (!redisClient) {
+        console.log('Failed to connect to redis...');
+        exit(1);
+    }
+
     const app = Express();
+
+    app.use((req, _, next) => {
+        req.redis = redisClient;
+        next();
+    });
+
     app.use(bodyParser.json());
 
     app.use('/users', userRouter);

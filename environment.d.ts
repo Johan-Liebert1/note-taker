@@ -1,4 +1,5 @@
 import { Jwt } from 'jsonwebtoken';
+import { createClient } from 'redis';
 
 declare global {
     namespace NodeJS {
@@ -13,6 +14,7 @@ declare global {
     namespace Express {
         interface Request {
             decodedJwt: Jwt | undefined;
+            redis: ReturnType<typeof createClient>;
         }
     }
 }

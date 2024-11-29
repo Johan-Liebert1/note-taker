@@ -6,6 +6,9 @@ import { generateJwtFromUserId } from '../jwt/index.js';
 import { Note } from '../db/notes.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 
+// 5 minutes
+const NotesCacheTime = 5 * 60;
+
 const userRouter = Router();
 
 /** @typedef {import('../types/typedefs.js').UserRegisterRequest} UserRegisterRequest */
@@ -146,8 +149,26 @@ userRouter.get(
             /** @type {number} */
             const userId = req.decodedJwt.payload['userId'];
 
+            const value = await req.redis.hGet(userId.toString(), 'notes');
+
+            if (value) {
+                /** @type {AllNotes} */
+                const parsedNotes = JSON.parse(value);
+
+                res.status(200).json({
+                    success: true,
+                    notes: parsedNotes
+                });
+
+                return;
+            }
+
             /** @type {AllNotes} */
             const allNotes = await Note.findAll({ where: { user_id: userId, deleted: false } });
+
+            await req.redis.set(`${userId}:notes`, JSON.stringify(allNotes), {
+                EX: NotesCacheTime
+            });
 
             res.status(200).json({
                 success: true,
